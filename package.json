@@ -1,0 +1,98 @@
+{
+  "name": "top-crawler-agents",
+  "description": "A list of common crawler agents used on Internet..",
+  "homepage": "https://github.com/Kikobeats/top-crawler-agents",
+  "version": "0.0.0",
+  "main": "index.js",
+  "author": {
+    "email": "josefrancisco.verdu@gmail.com",
+    "name": "Kiko Beats",
+    "url": "https://kikobeats.com"
+  },
+  "contributors": [
+    {
+      "name": "Karl Horky",
+      "email": "karl.horky@gmail.com"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kikobeats/top-crawler-agents.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Kikobeats/top-crawler-agents/issues"
+  },
+  "keywords": [
+    "agent",
+    "common",
+    "popular",
+    "string",
+    "top",
+    "ua",
+    "user",
+    "useragent"
+  ],
+  "devDependencies": {
+    "@commitlint/cli": "latest",
+    "@commitlint/config-conventional": "latest",
+    "@ksmithut/prettier-standard": "latest",
+    "cheerio": "latest",
+    "ci-publish": "latest",
+    "conventional-github-releaser": "latest",
+    "crawler-user-agents": "latest",
+    "finepack": "latest",
+    "git-authors-cli": "latest",
+    "nano-staged": "latest",
+    "npm-check-updates": "latest",
+    "p-filter": "2",
+    "simple-git-hooks": "latest",
+    "standard": "latest",
+    "standard-markdown": "latest",
+    "standard-version": "latest"
+  },
+  "engines": {
+    "node": ">= 18"
+  },
+  "files": [
+    "index.js",
+    "index.json"
+  ],
+  "scripts": {
+    "clean": "rm -rf node_modules",
+    "contributors": "(npx git-authors-cli && npx finepack && git add package.json && git commit -m 'build: contributors' --no-verify) || true",
+    "cronjob": "npm run update:user-agents && npm run healthcheck",
+    "healthcheck": "curl -fsS -m 10 --retry 5 -o /dev/null https://hc-ping.com/2345b25e-fe7d-4efd-b085-5886e6c85cc7",
+    "lint": "standard-markdown README.md && standard",
+    "postrelease": "npm run release:tags && npm run release:github && (ci-publish || npm publish --access=public)",
+    "prerelease": "npm run update:check",
+    "pretest": "npm run lint",
+    "release": "standard-version -a",
+    "release:github": "conventional-github-releaser -p angular",
+    "release:tags": "git push --follow-tags origin HEAD:master",
+    "test": "exit 0",
+    "update": "ncu -u",
+    "update:check": "ncu -- --error-level 2"
+  },
+  "license": "MIT",
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "nano-staged": {
+    "*.js,!*.min.js,": [
+      "prettier-standard",
+      "standard --fix"
+    ],
+    "*.md": [
+      "standard-markdown"
+    ],
+    "package.json": [
+      "finepack"
+    ]
+  },
+  "simple-git-hooks": {
+    "commit-msg": "npx commitlint --edit",
+    "pre-commit": "npx nano-staged"
+  }
+}
