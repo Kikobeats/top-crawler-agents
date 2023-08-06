@@ -20,11 +20,10 @@ $ npm install top-crawler-agents --save
 
 ```js
 const uniqueRandomArray = require('unique-random-array')
-const userAgents = require('top-crawler-agents')
 
-const randomUserAgent = uniqueRandomArray(userAgents)
+const randomCrawlerAgent = uniqueRandomArray(require('top-crawler-agents'))
 
-console.log(randomUserAgent())
+console.log(randomCrawlerAgent())
 // => 'Slackbot-LinkExpanding (+https://api.slack.com/robots)'
 ```
 
