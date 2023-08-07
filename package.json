@@ -44,7 +44,7 @@
     "git-authors-cli": "latest",
     "nano-staged": "latest",
     "npm-check-updates": "latest",
-    "p-filter": "2",
+    "p-filter": "3",
     "simple-git-hooks": "latest",
     "standard": "latest",
     "standard-markdown": "latest",
