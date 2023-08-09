@@ -34,5 +34,5 @@ Promise.resolve()
   .then(() => pFilter(candidates, verify, { concurrency: MAX_CONCURRENCY }))
   .then(async result => {
     await writeFile('index.json', JSON.stringify(result, null, 2))
-    console.log(`Generated ${result.length} crawlers ✨`)
+    console.log(`\nGenerated ${result.length} crawlers ✨`)
   })
