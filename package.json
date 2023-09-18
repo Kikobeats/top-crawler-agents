@@ -2,7 +2,7 @@
   "name": "top-crawler-agents",
   "description": "A list of common crawler agents used on Internet..",
   "homepage": "https://github.com/Kikobeats/top-crawler-agents",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "main": "index.js",
   "author": {
     "email": "josefrancisco.verdu@gmail.com",
