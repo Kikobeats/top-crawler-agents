@@ -1,3 +1,5 @@
+/* global AbortController, fetch */
+
 'use strict'
 
 const crawlers = require('crawler-user-agents')
