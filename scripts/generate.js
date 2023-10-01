@@ -15,8 +15,8 @@ const REQ_TIMEOUT = 10000
 const candidates = [...new Set(crawlers.flatMap(crawler => crawler.instances))]
 
 const URLS = [
-  'https://twitter.com/Kikobeats/status/1687837848802578432'
-  // 'https://www.tesla.com/nl_NL/m3/order/LRW3228_606edc0abaa8666f9e88d89a1b30e988?titleStatus=new&redirect=no#overview'
+  'https://twitter.com/Kikobeats/status/1687837848802578432',
+  'https://www.tesla.com/ms/order/5YJSA1E21MF426731'
 ]
 
 const verifyUrl = userAgent => async url => {
