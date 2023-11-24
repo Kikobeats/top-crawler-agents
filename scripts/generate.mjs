@@ -2,11 +2,13 @@
 
 'use strict'
 
-const crawlers = require('crawler-user-agents')
-const { writeFile } = require('fs/promises')
-const { load } = require('cheerio')
-const pFilter = require('p-filter')
-const pEvery = require('p-every')
+import { createRequire } from 'module'
+import { writeFile } from 'fs/promises'
+import { load } from 'cheerio'
+import pFilter from 'p-filter'
+import pEvery from 'p-every'
+
+const crawlers = createRequire(import.meta.url)('crawler-user-agents/crawler-user-agents.json')
 
 const CHECK = { true: '✅', false: '❌' }
 const MAX_CONCURRENCY = 10
@@ -14,9 +16,13 @@ const REQ_TIMEOUT = 10000
 
 const candidates = [...new Set(crawlers.flatMap(crawler => crawler.instances))]
 
+const teslaUrl = await fetch('https://api.teslahunt.io/cars?maxRecords=1', { headers: { 'x-api-key': process.env.TESLAHUNT_API_KEY } })
+  .then(res => res.json())
+  .then(payload => payload.detailsUrl)
+
 const URLS = [
   'https://twitter.com/Kikobeats/status/1687837848802578432',
-  'https://www.tesla.com/ms/order/5YJSA1E21MF426731'
+  teslaUrl
 ]
 
 const verifyUrl = userAgent => async url => {

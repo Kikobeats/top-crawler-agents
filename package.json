@@ -63,7 +63,7 @@
     "contributors": "(npx git-authors-cli && npx finepack && git add package.json && git commit -m 'build: contributors' --no-verify) || true",
     "cronjob": "npm run update:crawler-agents && npm run healthcheck",
     "healthcheck": "curl -fsS -m 10 --retry 5 -o /dev/null https://hc-ping.com/b7995d4b-75cb-4434-9338-8c1aa4679dc6",
-    "lint": "standard-markdown README.md && standard",
+    "lint": "standard-markdown README.md",
     "postrelease": "npm run release:tags && npm run release:github && (ci-publish || npm publish --access=public)",
     "prerelease": "npm run update:check",
     "pretest": "npm run lint",
@@ -73,7 +73,7 @@
     "test": "exit 0",
     "update": "ncu -u",
     "update:check": "ncu -- --error-level 2",
-    "update:crawler-agents": "(node scripts/generate.js && git add index.json && git commit -m 'build(update): crawlers' --no-verify && git push) || true"
+    "update:crawler-agents": "(node scripts/generate.mjs && git add index.json && git commit -m 'build(update): crawlers' --no-verify && git push) || true"
   },
   "license": "MIT",
   "commitlint": {
