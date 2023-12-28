@@ -45,7 +45,7 @@
     "nano-staged": "latest",
     "npm-check-updates": "latest",
     "p-every": "latest",
-    "p-filter": "2",
+    "p-filter": "4",
     "simple-git-hooks": "latest",
     "standard": "latest",
     "standard-markdown": "latest",
