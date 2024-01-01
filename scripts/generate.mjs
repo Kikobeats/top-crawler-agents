@@ -18,7 +18,7 @@ const candidates = [...new Set(crawlers.flatMap(crawler => crawler.instances))]
 
 const teslaUrl = await fetch('https://api.teslahunt.io/cars?maxRecords=1', { headers: { 'x-api-key': process.env.TESLAHUNT_API_KEY } })
   .then(res => res.json())
-  .then(payload => payload.detailsUrl)
+  .then(cars => cars[0].detailsUrl)
 
 const URLS = [
   'https://twitter.com/Kikobeats/status/1687837848802578432',
