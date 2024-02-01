@@ -8,15 +8,27 @@ import { load } from 'cheerio'
 import pFilter from 'p-filter'
 import pEvery from 'p-every'
 
-const crawlers = createRequire(import.meta.url)('crawler-user-agents/crawler-user-agents.json')
+const crawlers = createRequire(import.meta.url)(
+  'crawler-user-agents/crawler-user-agents.json'
+)
 
 const CHECK = { true: '✅', false: '❌' }
 const MAX_CONCURRENCY = 10
 const REQ_TIMEOUT = 10000
 
-const candidates = [...new Set(crawlers.flatMap(crawler => crawler.instances))]
+const shuffle = array => {
+  for (let index = array.length - 1; index > 0; index--) {
+    const newIndex = Math.floor(Math.random() * (index + 1))
+    ;[array[index], array[newIndex]] = [array[newIndex], array[index]]
+  }
+  return array
+}
 
-const teslaUrl = await fetch('https://api.teslahunt.io/cars?maxRecords=1', { headers: { 'x-api-key': process.env.TESLAHUNT_API_KEY } })
+const candidates = shuffle([...new Set(crawlers.flatMap(crawler => crawler.instances))])
+
+const teslaUrl = await fetch('https://api.teslahunt.io/cars?maxRecords=1', {
+  headers: { 'x-api-key': process.env.TESLAHUNT_API_KEY }
+})
   .then(res => res.json())
   .then(cars => cars[0].detailsUrl)
 
@@ -51,6 +63,7 @@ const verify = async (userAgent, index) =>
 Promise.resolve()
   .then(() => pFilter(candidates, verify, { concurrency: MAX_CONCURRENCY }))
   .then(async result => {
-    await writeFile('index.json', JSON.stringify(result, null, 2))
-    console.log(`\nGenerated ${result.length} crawlers ✨`)
+    const sorted = result.sort((a, b) => a.localeCompare(b))
+    await writeFile('index.json', JSON.stringify(sorted, null, 2))
+    console.log(`\nGenerated ${sorted.length} crawlers ✨`)
   })
