@@ -9,12 +9,7 @@
     "name": "Kiko Beats",
     "url": "https://kikobeats.com"
   },
-  "contributors": [
-    {
-      "name": "Karl Horky",
-      "email": "karl.horky@gmail.com"
-    }
-  ],
+  "contributors": [],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Kikobeats/top-crawler-agents.git"
