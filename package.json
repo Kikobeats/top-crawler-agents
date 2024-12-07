@@ -43,7 +43,6 @@
     "git-authors-cli": "latest",
     "github-generate-release": "latest",
     "nano-staged": "latest",
-    "npm-check-updates": "latest",
     "p-every": "latest",
     "p-filter": "2",
     "simple-git-hooks": "latest",
@@ -65,21 +64,23 @@
     "healthcheck": "curl -fsS -m 10 --retry 5 -o /dev/null https://hc-ping.com/b7995d4b-75cb-4434-9338-8c1aa4679dc6",
     "lint": "standard-markdown README.md",
     "postrelease": "npm run release:tags && npm run release:github && (ci-publish || npm publish --access=public)",
-    "prerelease": "npm run update:check",
     "pretest": "npm run lint",
     "release": "standard-version -a",
     "release:github": "github-generate-release",
     "release:tags": "git push --follow-tags origin HEAD:master",
     "test": "exit 0",
-    "update": "ncu -u",
-    "update:check": "ncu -- --error-level 2",
     "update:crawler-agents": "(node scripts/generate.mjs && git add index.json && git commit -m 'build(update): crawlers' --no-verify && git push) || true"
   },
   "license": "MIT",
   "commitlint": {
     "extends": [
       "@commitlint/config-conventional"
-    ]
+    ],
+    "rules": {
+      "body-max-line-length": [
+        0
+      ]
+    }
   },
   "nano-staged": {
     "*.js": [
