@@ -1,67 +1,93 @@
-/* global AbortController, fetch */
-
 'use strict'
 
 import { createRequire } from 'module'
 import { writeFile } from 'fs/promises'
+import Bottleneck from 'bottleneck'
+import { styleText } from 'util'
 import { load } from 'cheerio'
 import pFilter from 'p-filter'
 import pEvery from 'p-every'
 
-const crawlers = createRequire(import.meta.url)(
-  'crawler-user-agents/crawler-user-agents.json'
-)
-
 const CHECK = { true: '✅', false: '❌' }
-const MAX_CONCURRENCY = 10
+const MAX_CONCURRENCY = 1
 const REQ_TIMEOUT = 10000
 
-const shuffle = array => {
-  for (let index = array.length - 1; index > 0; index--) {
-    const newIndex = Math.floor(Math.random() * (index + 1))
-    ;[array[index], array[newIndex]] = [array[newIndex], array[index]]
-  }
-  return array
-}
-
-const candidates = shuffle([...new Set(crawlers.flatMap(crawler => crawler.instances))])
-
-const teslaUrl = await fetch('https://api.teslahunt.io/cars?maxRecords=1', {
-  headers: { 'x-api-key': process.env.TESLAHUNT_API_KEY }
-})
-  .then(res => res.json())
-  .then(cars => cars[0].detailsUrl)
-
-const URLS = [
-  'https://twitter.com/Kikobeats/status/1687837848802578432',
-  teslaUrl
+const VERIFICATIONS = [
+  [
+    'https://twitter.com/Kikobeats/status/1687837848802578432',
+    html => {
+      const $ = load(html)
+      const imageUrl = $('meta[property="og:image"]').attr('content')
+      return !!imageUrl
+    }
+  ],
+  [
+    'https://www.youtube.com/watch?v=mSpZL4g7ocs',
+    html => {
+      const $ = load(html)
+      return $('title').text() !== ' - YouTube'
+    }
+  ]
 ]
 
-const verifyUrl = userAgent => async url => {
-  try {
-    const controller = new AbortController()
-    setTimeout(() => controller.abort(), REQ_TIMEOUT)
-    const res = await fetch(url, {
-      signal: controller.signal,
-      headers: { 'user-agent': userAgent, redirect: 'manual' }
-    })
-    const html = await res.text()
-    const $ = load(html)
-    const imageUrl = $('meta[property="og:image"]').attr('content')
-    return !!imageUrl
-  } catch (_) {
-    return false
+const SOURCES = [
+  async () => {
+    const res = await fetch(
+      'https://raw.githubusercontent.com/arcjet/well-known-bots/main/well-known-bots.json'
+    )
+    const json = await res.json()
+    return json.map(item => item.instances.accepted).flat()
+  },
+  () => {
+    const mod = createRequire(import.meta.url)(
+      'crawler-user-agents/crawler-user-agents.json'
+    )
+    const userAgents = mod.map(item => item.instances).flat()
+    return userAgents
   }
+]
+
+const userAgents = [
+  ...new Set((await Promise.all(SOURCES.map(fn => fn()))).flat())
+].sort((a, b) => a.localeCompare(b))
+
+const total = userAgents.length
+
+const limiter = new Bottleneck({
+  maxConcurrent: MAX_CONCURRENCY,
+  minTime: 5000
+})
+
+const verify = (userAgent, index) => {
+  if (index !== 0) console.log()
+  console.log(`[${index}/${total}] ${userAgent}\n`)
+  return pEvery(
+    VERIFICATIONS,
+    async ([url, verifyFn]) => {
+      let result = false
+      try {
+        const controller = new AbortController()
+        setTimeout(() => controller.abort(), REQ_TIMEOUT)
+        const res = await fetch(url, {
+          signal: controller.signal,
+          headers: { 'user-agent': userAgent, redirect: 'manual' }
+        })
+        const html = await res.text()
+        result = verifyFn(html)
+      } catch (_) {}
+      console.log(' ' + styleText('gray', `${url} ${CHECK[result]}`))
+      return result
+    },
+    { concurrency: MAX_CONCURRENCY }
+  )
 }
 
-const verify = async (userAgent, index) =>
-  pEvery(URLS, verifyUrl(userAgent)).then(result => {
-    console.log(`${CHECK[result]} ${index}/${candidates.length} ${userAgent}`)
-    return result
-  })
-
 Promise.resolve()
-  .then(() => pFilter(candidates, verify, { concurrency: MAX_CONCURRENCY }))
+  .then(() =>
+    pFilter(userAgents, (...args) => limiter.schedule(() => verify(...args)), {
+      concurrency: MAX_CONCURRENCY
+    })
+  )
   .then(async result => {
     const sorted = result.sort((a, b) => a.localeCompare(b))
     await writeFile('index.json', JSON.stringify(sorted, null, 2))

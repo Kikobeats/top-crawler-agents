@@ -31,6 +31,7 @@
     "@commitlint/cli": "latest",
     "@commitlint/config-conventional": "latest",
     "@ksmithut/prettier-standard": "latest",
+    "bottleneck": "latest",
     "cheerio": "latest",
     "ci-publish": "latest",
     "crawler-user-agents": "latest",
