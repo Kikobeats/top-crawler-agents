@@ -18,7 +18,7 @@ const VERIFICATIONS = [
     $ => !!$('meta[property="og:image"]').attr('content')
   ],
   [
-    'https://www.youtube.com/watch?v=vkddaKFgO5g',
+    'https://www.youtube.com/watch?v=vkddaKFgO5g&app=desktop',
     $ => $('title').text() === 'INFINITO AL 40% - YouTube'
   ]
 ]
@@ -47,7 +47,6 @@ const userAgents = [
 const total = userAgents.length
 
 const limiter = new Bottleneck({
-  maxConcurrent: MAX_CONCURRENCY,
   minTime: 5000
 })
 
@@ -56,30 +55,33 @@ const verify = (userAgent, index) => {
   console.log(`[${index + 1}/${total}] ${userAgent}\n`)
   return pEvery(
     VERIFICATIONS,
-    async ([url, verifyFn]) => {
-      let result = false
-      let statusCode
-      try {
-        const controller = new AbortController()
-        setTimeout(() => controller.abort(), REQ_TIMEOUT)
-        const res = await fetch(url, {
-          signal: controller.signal,
-          headers: { 'user-agent': userAgent, redirect: 'manual' }
-        })
-        const html = await res.text()
-        statusCode = res.status
-        result = verifyFn(load(html))
-      } catch (_) {}
-      console.log(' ' + styleText('gray', `${url} (${statusCode}) ${CHECK[result]}`))
-      return result
-    },
+    async ([url, verifyFn]) =>
+      limiter.schedule(async () => {
+        let result = false
+        let statusCode
+        try {
+          const controller = new AbortController()
+          setTimeout(() => controller.abort(), REQ_TIMEOUT)
+          const res = await fetch(url, {
+            signal: controller.signal,
+            headers: { 'user-agent': userAgent, redirect: 'manual' }
+          })
+          const html = await res.text()
+          statusCode = res.status
+          result = await verifyFn(load(html))
+        } catch (_) {}
+        console.log(
+          ' ' + styleText('gray', `${url} (${statusCode}) ${CHECK[result]}`)
+        )
+        return result
+      }),
     { concurrency: MAX_CONCURRENCY }
   )
 }
 
 Promise.resolve()
   .then(() =>
-    pFilter(userAgents, (...args) => limiter.schedule(() => verify(...args)), {
+    pFilter(userAgents, verify, {
       concurrency: MAX_CONCURRENCY
     })
   )
