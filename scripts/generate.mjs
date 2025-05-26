@@ -3,6 +3,7 @@
 import { createRequire } from 'module'
 import { writeFile } from 'fs/promises'
 import Bottleneck from 'bottleneck'
+// import { writeFileSync } from 'fs'
 import { styleText } from 'util'
 import { load } from 'cheerio'
 import pFilter from 'p-filter'
@@ -18,7 +19,7 @@ const VERIFICATIONS = [
     $ => !!$('meta[property="og:image"]').attr('content')
   ],
   [
-    'https://www.youtube.com/watch?v=vkddaKFgO5g&app=desktop',
+    'https://www.youtube.com/watch?v=vkddaKFgO5g&app=desktop&disable_polymer=true',
     $ => $('title').text() === 'INFINITO AL 40% - YouTube'
   ]
 ]
@@ -69,6 +70,15 @@ const verify = (userAgent, index) => {
           const html = await res.text()
           statusCode = res.status
           result = await verifyFn(load(html))
+          // if (url.includes('youtube-fetch')) {
+          //   const filepath = process.cwd() + `/${Date.now()}-${res.status}.html`
+          //   console.log('saving html', filepath, `${url} (${statusCode}) ${CHECK[result]}`)
+          //   writeFileSync(
+          //     filepath,
+          //     html,
+          //     'utf8'
+          //   ) // Save the HTML for debugging
+          // }
         } catch (_) {}
         console.log(
           ' ' + styleText('gray', `${url} (${statusCode}) ${CHECK[result]}`)
