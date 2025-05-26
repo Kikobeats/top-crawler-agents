@@ -65,6 +65,7 @@ const verify = (userAgent, index) => {
     VERIFICATIONS,
     async ([url, verifyFn]) => {
       let result = false
+      let statusCode
       try {
         const controller = new AbortController()
         setTimeout(() => controller.abort(), REQ_TIMEOUT)
@@ -73,9 +74,10 @@ const verify = (userAgent, index) => {
           headers: { 'user-agent': userAgent, redirect: 'manual' }
         })
         const html = await res.text()
+        statusCode = res.status
         result = verifyFn(html)
       } catch (_) {}
-      console.log(' ' + styleText('gray', `${url} ${CHECK[result]}`))
+      console.log(' ' + styleText('gray', `${url} (${statusCode}) ${CHECK[result]}`))
       return result
     },
     { concurrency: MAX_CONCURRENCY }
