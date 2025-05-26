@@ -15,18 +15,11 @@ const REQ_TIMEOUT = 10000
 const VERIFICATIONS = [
   [
     'https://twitter.com/Kikobeats/status/1687837848802578432',
-    html => {
-      const $ = load(html)
-      const imageUrl = $('meta[property="og:image"]').attr('content')
-      return !!imageUrl
-    }
+    $ => !!$('meta[property="og:image"]').attr('content')
   ],
   [
-    'https://www.youtube.com/watch?v=mSpZL4g7ocs',
-    html => {
-      const $ = load(html)
-      return $('title').text() !== ' - YouTube'
-    }
+    'https://www.youtube.com/watch?v=vkddaKFgO5g',
+    $ => $('title').text() === 'INFINITO AL 40% - YouTube'
   ]
 ]
 
@@ -60,7 +53,7 @@ const limiter = new Bottleneck({
 
 const verify = (userAgent, index) => {
   if (index !== 0) console.log()
-  console.log(`[${index}/${total}] ${userAgent}\n`)
+  console.log(`[${index + 1}/${total}] ${userAgent}\n`)
   return pEvery(
     VERIFICATIONS,
     async ([url, verifyFn]) => {
@@ -75,7 +68,7 @@ const verify = (userAgent, index) => {
         })
         const html = await res.text()
         statusCode = res.status
-        result = verifyFn(html)
+        result = verifyFn(load(html))
       } catch (_) {}
       console.log(' ' + styleText('gray', `${url} (${statusCode}) ${CHECK[result]}`))
       return result
