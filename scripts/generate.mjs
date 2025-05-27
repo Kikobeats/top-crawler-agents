@@ -9,18 +9,22 @@ import { load } from 'cheerio'
 import pFilter from 'p-filter'
 import pEvery from 'p-every'
 
+import { withFetch, withPrerender } from './fetcher.mjs'
+
 const CHECK = { true: '✅', false: '❌' }
 const MAX_CONCURRENCY = 1
-const REQ_TIMEOUT = 10000
+const MIN_WAIT_TIME = 1000
 
 const VERIFICATIONS = [
   [
     'https://twitter.com/Kikobeats/status/1687837848802578432',
-    $ => !!$('meta[property="og:image"]').attr('content')
+    $ => !!$('meta[property="og:image"]').attr('content'),
+    withFetch
   ],
   [
-    'https://www.youtube.com/watch?v=vkddaKFgO5g&app=desktop&disable_polymer=true',
-    $ => $('title').text() === 'INFINITO AL 40% - YouTube'
+    'https://www.youtube.com/watch?v=vkddaKFgO5g&app=desktop',
+    $ => $('title').text() === 'INFINITO AL 40% - YouTube',
+    withPrerender
   ]
 ]
 
@@ -48,7 +52,7 @@ const userAgents = [
 const total = userAgents.length
 
 const limiter = new Bottleneck({
-  minTime: 5000
+  minTime: MIN_WAIT_TIME
 })
 
 const verify = (userAgent, index) => {
@@ -56,30 +60,20 @@ const verify = (userAgent, index) => {
   console.log(`[${index + 1}/${total}] ${userAgent}\n`)
   return pEvery(
     VERIFICATIONS,
-    async ([url, verifyFn]) =>
+    async ([url, verifyFn, fetcher]) =>
       limiter.schedule(async () => {
         let result = false
         let statusCode
         try {
-          const controller = new AbortController()
-          setTimeout(() => controller.abort(), REQ_TIMEOUT)
-          const res = await fetch(url, {
-            signal: controller.signal,
-            headers: { 'user-agent': userAgent, redirect: 'manual' }
-          })
-          const html = await res.text()
-          statusCode = res.status
+          const { html, statusCode: _statusCode } = await fetcher(
+            url,
+            userAgent
+          )
+          statusCode = _statusCode
           result = await verifyFn(load(html))
-          // if (url.includes('youtube-fetch')) {
-          //   const filepath = process.cwd() + `/${Date.now()}-${res.status}.html`
-          //   console.log('saving html', filepath, `${url} (${statusCode}) ${CHECK[result]}`)
-          //   writeFileSync(
-          //     filepath,
-          //     html,
-          //     'utf8'
-          //   ) // Save the HTML for debugging
-          // }
-        } catch (_) {}
+        } catch (error) {
+          console.log('ERROR', error)
+        }
         console.log(
           ' ' + styleText('gray', `${url} (${statusCode}) ${CHECK[result]}`)
         )
