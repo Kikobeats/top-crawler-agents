@@ -12,8 +12,8 @@ import pEvery from 'p-every'
 import { withFetch, withPrerender } from './fetcher.mjs'
 
 const CHECK = { true: '✅', false: '❌' }
-const MAX_CONCURRENCY = 1
-const MIN_WAIT_TIME = 1000
+const MAX_CONCURRENCY = Number(process.env.MAX_CONCURRENCY) || 1
+const MIN_WAIT_TIME = Number(process.env.MIN_WAIT_TIME) || 5000
 
 const VERIFICATIONS = [
   [

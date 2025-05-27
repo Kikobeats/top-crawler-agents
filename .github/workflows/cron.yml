@@ -1,7 +1,16 @@
 name: cron
 
 on:
-  workflow_dispatch: # Allows manual trigger
+  workflow_dispatch:
+    inputs:
+      min_wait_time:
+        description: 'Minimum wait time'
+        required: false
+        default: 5000
+      max_concurrency:
+        description: 'Maximum concurrency'
+        required: false
+        default: 1
   schedule:
     # Cron job every Monday at 12:00
     # https://crontab.guru/every-monday
@@ -28,4 +37,6 @@ jobs:
         run: |
           git config --global user.email ${{ secrets.GIT_EMAIL }}
           git config --global user.name ${{ secrets.GIT_USERNAME }}
+          MIN_WAIT_TIME="${{ github.event.inputs.min_wait_time }}" \
+          MAX_CONCURRENCY="${{ github.event.inputs.max_concurrency }}" \
           npm run cronjob
