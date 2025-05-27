@@ -83,6 +83,9 @@ const verify = (userAgent, index) => {
   )
 }
 
+console.log('Starting verification of user agents...')
+console.log(`Using ${MAX_CONCURRENCY} concurrent requests and a minimum wait time of ${MIN_WAIT_TIME}ms`)
+
 Promise.resolve()
   .then(() =>
     pFilter(userAgents, verify, {
