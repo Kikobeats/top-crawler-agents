@@ -83,8 +83,9 @@ const verify = (userAgent, index) => {
   )
 }
 
-console.log('Starting verification of user agents...')
-console.log(`Using ${MAX_CONCURRENCY} concurrent requests and a minimum wait time of ${MIN_WAIT_TIME}ms`)
+console.log()
+console.log(`Starting verification of user agents MAX_CONCURRENCY=${MAX_CONCURRENCY} MIN_WAIT_TIME=${MIN_WAIT_TIME}`)
+console.log()
 
 Promise.resolve()
   .then(() =>
