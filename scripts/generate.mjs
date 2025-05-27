@@ -9,7 +9,10 @@ import { load } from 'cheerio'
 import pFilter from 'p-filter'
 import pEvery from 'p-every'
 
-import { withFetch, withPrerender } from './fetcher.mjs'
+import {
+  withFetch
+  /* withPrerender */
+} from './fetcher.mjs'
 
 const CHECK = { true: '✅', false: '❌' }
 const MAX_CONCURRENCY = Number(process.env.MAX_CONCURRENCY) || 1
@@ -20,12 +23,12 @@ const VERIFICATIONS = [
     'https://twitter.com/Kikobeats/status/1687837848802578432',
     $ => !!$('meta[property="og:image"]').attr('content'),
     withFetch
-  ],
-  [
-    'https://www.youtube.com/watch?v=vkddaKFgO5g&app=desktop',
-    $ => $('title').text() === 'INFINITO AL 40% - YouTube',
-    withPrerender
   ]
+  // [
+  //   'https://www.youtube.com/watch?v=vkddaKFgO5g&app=desktop',
+  //   $ => $('title').text() === 'INFINITO AL 40% - YouTube',
+  //   withPrerender
+  // ]
 ]
 
 const SOURCES = [
