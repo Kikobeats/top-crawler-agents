@@ -54,6 +54,11 @@ const userAgents = [
 
 const total = userAgents.length
 
+if (total === 0) {
+  console.error('No user agents found to verify.')
+  process.exit(1)
+}
+
 const limiter = new Bottleneck({
   minTime: MIN_WAIT_TIME
 })
@@ -97,7 +102,13 @@ Promise.resolve()
     })
   )
   .then(async result => {
+    if (result.length === 0) {
+      throw new Error('No user agents passed the verification.')
+    }
     const sorted = result.sort((a, b) => a.localeCompare(b))
     await writeFile('index.json', JSON.stringify(sorted, null, 2))
     console.log(`\nGenerated ${sorted.length} crawlers ✨`)
+  }).catch(error => {
+    console.error('Error during verification:', error)
+    process.exit(1)
   })
