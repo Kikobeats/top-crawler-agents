@@ -9,7 +9,12 @@
     "name": "Kiko Beats",
     "url": "https://kikobeats.com"
   },
-  "contributors": [],
+  "contributors": [
+    {
+      "name": "omrilotan",
+      "email": "omrilotan@hotmail.com"
+    }
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Kikobeats/top-crawler-agents.git"
