@@ -1,6 +1,5 @@
 'use strict'
 
-import { createRequire } from 'module'
 import { writeFile } from 'fs/promises'
 import Bottleneck from 'bottleneck'
 // import { writeFileSync } from 'fs'
@@ -8,6 +7,8 @@ import { styleText } from 'util'
 import { load } from 'cheerio'
 import pFilter from 'p-filter'
 import pEvery from 'p-every'
+
+import crawlerUserAgents from 'crawler-user-agents'
 
 import {
   withFetch
@@ -20,15 +21,15 @@ const MIN_WAIT_TIME = Number(process.env.MIN_WAIT_TIME) || 5000
 
 const VERIFICATIONS = [
   [
-    'https://twitter.com/Kikobeats/status/1687837848802578432',
+    'https://x.com/Kikobeats/status/1687837848802578432',
+    $ => !!$('meta[property="og:image"]').attr('content'),
+    withFetch
+  ],
+  [
+    'https://www.instagram.com/kikobeats',
     $ => !!$('meta[property="og:image"]').attr('content'),
     withFetch
   ]
-  // [
-  //   'https://www.youtube.com/watch?v=vkddaKFgO5g&app=desktop',
-  //   $ => $('title').text() === 'INFINITO AL 40% - YouTube',
-  //   withPrerender
-  // ]
 ]
 
 const SOURCES = [
@@ -40,11 +41,7 @@ const SOURCES = [
     return json.map(item => item.instances.accepted).flat()
   },
   () => {
-    const mod = createRequire(import.meta.url)(
-      'crawler-user-agents/crawler-user-agents.json'
-    )
-    const userAgents = mod.map(item => item.instances).flat()
-    return userAgents
+    return crawlerUserAgents.map(item => item.instances).flat()
   }
 ]
 
