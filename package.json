@@ -46,7 +46,7 @@
     "github-generate-release": "latest",
     "nano-staged": "latest",
     "p-every": "latest",
-    "p-filter": "2",
+    "p-filter": "4",
     "puppeteer": "latest",
     "simple-git-hooks": "latest",
     "standard": "latest",
