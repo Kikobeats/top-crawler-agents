@@ -1,7 +1,7 @@
 # top-crawler-agents
 
-![Last version](https://img.shields.io/github/tag/Kikobeats/top-crawler-agents.svg?style=flat-square)
-[![NPM Status](https://img.shields.io/npm/dm/top-crawler-agents.svg?style=flat-square)](https://www.npmjs.org/package/top-crawler-agents)
+[![Last version](https://img.shields.io/github/v/tag/Kikobeats/top-crawler-agents?style=flat-square)](https://github.com/Kikobeats/top-crawler-agents/releases)
+[![NPM Status](https://img.shields.io/npm/dm/top-crawler-agents?style=flat-square)](https://www.npmjs.com/package/top-crawler-agents)
 
 > A list of common crawler user agents useful for retrieving metadata from links<br>
 > derivated from [crawler-user-agents](https://github.com/monperrus/crawler-user-agents).
