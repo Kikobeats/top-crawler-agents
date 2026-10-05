@@ -2,7 +2,7 @@
   "name": "top-crawler-agents",
   "description": "Curated list of common web crawler and bot User-Agent strings used across the internet.",
   "homepage": "https://github.com/Kikobeats/top-crawler-agents",
-  "version": "1.0.40",
+  "version": "1.0.41",
   "main": "index.js",
   "author": {
     "email": "josefrancisco.verdu@gmail.com",
