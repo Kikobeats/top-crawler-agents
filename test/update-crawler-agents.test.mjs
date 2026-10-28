@@ -28,10 +28,13 @@ const setup = () => {
   mkdirSync(join(work, 'scripts'))
   writeFileSync(join(work, 'index.json'), '[]\n')
   writeFileSync(join(work, 'scripts', 'generate.mjs'), stub)
+  writeFileSync(join(work, 'scripts', 'healthcheck.mjs'), `import { writeFileSync } from 'node:fs'
+writeFileSync('healthcheck-ran', '')
+`)
   writeFileSync(join(work, 'package.json'), JSON.stringify({
     scripts: {
       cronjob: pkg.scripts.cronjob,
-      healthcheck: "node -e \"require('node:fs').writeFileSync('healthcheck-ran','')\"",
+      healthcheck: 'node scripts/healthcheck.mjs',
       'update:crawler-agents': pkg.scripts['update:crawler-agents']
     }
   }))
