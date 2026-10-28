@@ -72,7 +72,7 @@
     "release": "standard-version -a",
     "release:github": "github-generate-release",
     "release:tags": "git push --follow-tags origin HEAD:master",
-    "test": "exit 0",
+    "test": "node --test",
     "update:crawler-agents": "node scripts/generate.mjs && git add index.json && (git diff --cached --quiet || git commit -m 'build(update): crawlers' --no-verify) && git push"
   },
   "license": "MIT",

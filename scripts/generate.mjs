@@ -10,6 +10,7 @@ import pEvery from 'p-every'
 
 import crawlerUserAgents from 'crawler-user-agents'
 
+import { acceptedUserAgents } from './accepted-user-agents.mjs'
 import {
   withFetch
   /* withPrerender */
@@ -38,7 +39,7 @@ const SOURCES = [
       'https://raw.githubusercontent.com/arcjet/well-known-bots/main/well-known-bots.json'
     )
     const json = await res.json()
-    return json.flatMap(item => item.instances?.accepted ?? [])
+    return acceptedUserAgents(json)
   },
   () => {
     return crawlerUserAgents.map(item => item.instances).flat()
