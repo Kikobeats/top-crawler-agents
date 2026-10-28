@@ -49,6 +49,7 @@
     "p-every": "latest",
     "p-filter": "2",
     "puppeteer": "latest",
+    "signal-exit": "latest",
     "simple-git-hooks": "latest",
     "standard": "latest",
     "standard-version": "latest"
@@ -72,7 +73,7 @@
     "release:github": "github-generate-release",
     "release:tags": "git push --follow-tags origin HEAD:master",
     "test": "exit 0",
-    "update:crawler-agents": "(node scripts/generate.mjs && git add index.json && git commit -m 'build(update): crawlers' --no-verify && git push) || true"
+    "update:crawler-agents": "node scripts/generate.mjs && git add index.json && (git diff --cached --quiet || git commit -m 'build(update): crawlers' --no-verify) && git push"
   },
   "license": "MIT",
   "commitlint": {

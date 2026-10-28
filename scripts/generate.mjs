@@ -38,7 +38,7 @@ const SOURCES = [
       'https://raw.githubusercontent.com/arcjet/well-known-bots/main/well-known-bots.json'
     )
     const json = await res.json()
-    return json.map(item => item.instances.accepted).flat()
+    return json.flatMap(item => item.instances?.accepted ?? [])
   },
   () => {
     return crawlerUserAgents.map(item => item.instances).flat()
